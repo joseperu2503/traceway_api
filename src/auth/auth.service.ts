@@ -4,23 +4,20 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { DataSource, Repository } from 'typeorm';
 import {
   LoginUserDto,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
 } from './dto/login-user-dto';
-import { JwtPayload } from './interfaces/jwt-payload.interfaces';
-import { JwtService } from '@nestjs/jwt';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
-import { CustomerResponse } from 'mercadopago/dist/clients/customer/commonTypes';
-import { CustomerSearchResultsPage } from 'mercadopago/dist/clients/customer/search/types';
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { User } from './entities/user.entity';
+import { JwtPayload } from './interfaces/jwt-payload.interfaces';
 import { FacebookService } from './services/facebook/facebook.service';
 
 @Injectable()
@@ -29,7 +26,6 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-    private readonly mercadoPagoService: MercadoPagoService,
     private readonly dataSource: DataSource,
     private readonly facebookService: FacebookService,
   ) {}
@@ -48,25 +44,6 @@ export class AuthService {
       });
       await this.userRepository.save(user);
 
-      const searchCustomer: CustomerSearchResultsPage =
-        await this.mercadoPagoService.searchCustomer(user);
-
-      if (
-        searchCustomer.results &&
-        searchCustomer.results?.length > 0 &&
-        searchCustomer.results[0].id
-      ) {
-        user.mpCustomerId = searchCustomer.results[0].id;
-      } else {
-        const newCustomer: CustomerResponse =
-          await this.mercadoPagoService.createCustomer(user);
-
-        if (newCustomer.id) {
-          user.mpCustomerId = newCustomer.id;
-        }
-      }
-
-      await this.userRepository.save(user);
       await queryRunner.commitTransaction();
       await queryRunner.release();
 

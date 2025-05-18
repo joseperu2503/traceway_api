@@ -1,13 +1,7 @@
-import { Address } from 'src/addresses/entities/address.entity';
-import { Cart } from 'src/carts/entities/cart.entity';
-import { FavoriteDish } from 'src/favorites/entities/favorite-dish.entity';
-import { Order } from 'src/orders/entities/order.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -39,22 +33,6 @@ export class User {
 
   @Column('text')
   phone: string;
-
-  @Column('text', { nullable: true, name: 'mp_customer_id' })
-  mpCustomerId: string;
-
-  //un User tiene un Cart
-  @OneToOne(() => Cart, (cart) => cart.user)
-  cart: Cart;
-
-  @OneToMany(() => Order, (order) => order.user)
-  orders: Order[];
-
-  @OneToMany(() => FavoriteDish, (favoriteDish) => favoriteDish.user)
-  favoriteDishes: FavoriteDish[];
-
-  @OneToMany(() => Address, (address) => address.user)
-  addresses: Address[];
 
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
