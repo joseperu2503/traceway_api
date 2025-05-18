@@ -1,28 +1,28 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RestaurantsModule } from './restaurants/restaurants.module';
-import { SeedModule } from './seed/seed.module';
-import { DishCategoriesModule } from './dish-categories/dish-categories.module';
-import { DishesModule } from './dishes/dishes.module';
-import { AuthModule } from './auth/auth.module';
-import { ToppingsModule } from './toppings/toppings.module';
-import { ToppingCategoriesModule } from './topping-categories/topping-categories.module';
-import { CartsModule } from './carts/carts.module';
-import { AppController } from './app.controller';
+import { AddressDeliveryDetailsModule } from './address-delivery-details/address-delivery-details.module';
 import { AddressTagsModule } from './address-tags/address-tags.module';
 import { AddressesModule } from './addresses/addresses.module';
-import { AddressDeliveryDetailsModule } from './address-delivery-details/address-delivery-details.module';
-import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
+import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
 import { CardsModule } from './cards/cards.module';
+import { CartsModule } from './carts/carts.module';
+import { DishCategoriesModule } from './dish-categories/dish-categories.module';
+import { DishOrdersModule } from './dish-orders/dish-orders.module';
+import { DishesModule } from './dishes/dishes.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
-import { DishOrdersModule } from './dish-orders/dish-orders.module';
-import { ToppingDishOrdersModule } from './topping-dish-orders/topping-dish-orders.module';
-import { SeedCommand } from './seed/seed.command';
-import { FavoritesModule } from './favorites/favorites.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PrinterModule } from './printer/printer.module';
+import { RestaurantsModule } from './restaurants/restaurants.module';
+import { SeedCommand } from './seed/seed.command';
+import { SeedModule } from './seed/seed.module';
+import { ToppingCategoriesModule } from './topping-categories/topping-categories.module';
+import { ToppingDishOrdersModule } from './topping-dish-orders/topping-dish-orders.module';
+import { ToppingsModule } from './toppings/toppings.module';
 
 @Module({
   controllers: [AppController],
@@ -33,7 +33,7 @@ import { PrinterModule } from './printer/printer.module';
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT!,
       database: process.env.DB_NAME,
-      username: process.env.DB_USERMAME,
+      username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: false,
