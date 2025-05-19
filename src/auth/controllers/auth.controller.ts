@@ -10,11 +10,11 @@ import {
 import { GetUser } from '../decorators/get-user.decorator';
 import { JwtAuth } from '../decorators/jwt-auth.decorator';
 import {
-  LoginUserDto,
+  LoginRequest,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
-} from '../dto/login-user-dto';
-import { RegisterUserDto } from '../dto/register-user.dto';
+} from '../dto/login-request.dto';
+import { RegisterRequest } from '../dto/register-request.dto';
 import { UpdateAuthDto } from '../dto/update-auth.dto';
 import { User } from '../entities/user.entity';
 import { AuthService } from '../services/auth.service';
@@ -31,13 +31,13 @@ export class AuthController {
       'Creates a new user account with email, password, name, surname, and phone.',
   })
   @ApiBody({
-    type: RegisterUserDto,
+    type: RegisterRequest,
   })
   @ApiResponse({
     status: 201,
     description: 'User registered successfully.',
   })
-  register(@Body() registerUserDto: RegisterUserDto) {
+  register(@Body() registerUserDto: RegisterRequest) {
     return this.authService.register(registerUserDto);
   }
 
@@ -49,7 +49,7 @@ export class AuthController {
       'Authenticates a user with their email and password, returning an access token.',
   })
   @ApiBody({
-    type: LoginUserDto,
+    type: LoginRequest,
   })
   @ApiResponse({
     status: 200,
@@ -59,7 +59,7 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized - Invalid email or password.',
   })
-  login(@Body() loginUserDto: LoginUserDto) {
+  login(@Body() loginUserDto: LoginRequest) {
     return this.authService.login(loginUserDto);
   }
 

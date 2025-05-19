@@ -10,11 +10,11 @@ import * as bcrypt from 'bcrypt';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { DataSource, Repository } from 'typeorm';
 import {
-  LoginUserDto,
+  LoginRequest,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
-} from '../dto/login-user-dto';
-import { RegisterUserDto } from '../dto/register-user.dto';
+} from '../dto/login-request.dto';
+import { RegisterRequest } from '../dto/register-request.dto';
 import { UpdateAuthDto } from '../dto/update-auth.dto';
 import { User } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interfaces';
@@ -30,7 +30,7 @@ export class AuthService {
     private readonly facebookService: FacebookService,
   ) {}
 
-  async register(registerUserDto: RegisterUserDto) {
+  async register(registerUserDto: RegisterRequest) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -60,7 +60,7 @@ export class AuthService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  async login(loginUserDto: LoginRequest) {
     const { password, email } = loginUserDto;
 
     const user = await this.userRepository.findOne({

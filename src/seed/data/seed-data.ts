@@ -1,7 +1,7 @@
-import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
+import { RegisterRequest } from 'src/auth/dto/register-request.dto';
 
 interface SeedData {
-  users: RegisterUserDto[];
+  users: RegisterRequest[];
 }
 
 export const initialData: SeedData = {
