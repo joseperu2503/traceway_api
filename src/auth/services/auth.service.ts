@@ -13,12 +13,12 @@ import {
   LoginUserDto,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
-} from './dto/login-user-dto';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { User } from './entities/user.entity';
-import { JwtPayload } from './interfaces/jwt-payload.interfaces';
-import { FacebookService } from './services/facebook/facebook.service';
+} from '../dto/login-user-dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { UpdateAuthDto } from '../dto/update-auth.dto';
+import { User } from '../entities/user.entity';
+import { JwtPayload } from '../interfaces/jwt-payload.interfaces';
+import { FacebookService } from './facebook.service';
 
 @Injectable()
 export class AuthService {
@@ -162,7 +162,7 @@ export class AuthService {
     return token;
   }
 
-  async findOne(userId: number): Promise<User | null> {
+  async findOne(userId: string): Promise<User | null> {
     const user = await this.userRepository.findOneBy({ id: userId });
     return user;
   }

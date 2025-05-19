@@ -1,15 +1,4 @@
-import { Controller, Post, Body, Get, Put, HttpCode } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { RegisterUserDto } from './dto/register-user.dto';
-import {
-  LoginUserDto,
-  LoginUserFacebookDto,
-  LoginUserGoogleDto,
-} from './dto/login-user-dto';
-import { JwtAuth } from './decorators/jwt-auth.decorator';
-import { GetUser } from './decorators/get-user.decorator';
-import { User } from './entities/user.entity';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Body, Controller, Get, HttpCode, Post, Put } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -18,6 +7,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { GetUser } from '../decorators/get-user.decorator';
+import { JwtAuth } from '../decorators/jwt-auth.decorator';
+import {
+  LoginUserDto,
+  LoginUserFacebookDto,
+  LoginUserGoogleDto,
+} from '../dto/login-user-dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { UpdateAuthDto } from '../dto/update-auth.dto';
+import { User } from '../entities/user.entity';
+import { AuthService } from '../services/auth.service';
 
 @ApiTags('Authentication')
 @Controller('auth')

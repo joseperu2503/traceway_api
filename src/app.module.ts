@@ -4,6 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { LocationModule } from './locations/locations.module';
 import { SeedCommand } from './seed/seed.command';
 import { SeedModule } from './seed/seed.module';
 
@@ -19,11 +20,12 @@ import { SeedModule } from './seed/seed.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
     EventEmitterModule.forRoot(),
     SeedModule,
     AuthModule,
+    LocationModule,
   ],
   providers: [SeedCommand],
 })

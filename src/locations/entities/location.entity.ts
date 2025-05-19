@@ -6,33 +6,25 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('users')
-export class User {
+@Entity('locations')
+export class Location {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text', {
-    unique: true,
-  })
-  email: string;
+  @Column('text', { name: 'main_text' })
+  mainText: string;
 
-  @Column('text')
-  password: string;
+  @Column('text', { name: 'secondary_text' })
+  secondaryText: string;
 
-  @Column('text')
-  name: string;
+  @Column('double precision')
+  latitude: number;
 
-  @Column('text')
-  surname: string;
+  @Column('double precision')
+  longitude: number;
 
-  @Column('bool', {
-    default: true,
-    name: 'is_active',
-  })
-  isActive: boolean;
-
-  @Column('text')
-  phone: string;
+  @Column('text', { name: 'user_id' })
+  userId: string;
 
   @CreateDateColumn({
     type: 'timestamptz',
