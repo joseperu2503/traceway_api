@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLocation } from '../entities/user-location.entity';
 import { FindUserLocationResult } from '../interfaces/find-user-location-result.interface';
+import { UpdateUserLocationParams } from '../interfaces/update-user-location-params.interface';
 
 @Injectable()
 export class UserLocationService {
@@ -52,5 +53,21 @@ export class UserLocationService {
       user: { id: userId },
       location: { id: locationId },
     });
+  }
+
+  async update(
+    userId: string,
+    locationId: string,
+    params: UpdateUserLocationParams,
+  ) {
+    await this.userLocationRepository.update(
+      {
+        user: { id: userId },
+        location: { id: locationId },
+      },
+      {
+        lastUsedAt: params.lastUsedAt,
+      },
+    );
   }
 }

@@ -1,11 +1,12 @@
 import { User } from 'src/auth/entities/user.entity';
 import {
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Location } from './location.entity';
 
@@ -21,6 +22,13 @@ export class UserLocation {
   @ManyToOne(() => Location, (location) => location.userLocations)
   @JoinColumn({ name: 'location_id' })
   location: Location;
+
+  @Column({
+    type: 'timestamptz',
+    name: 'last_used_at',
+    nullable: true,
+  })
+  lastUsedAt: Date | null;
 
   @CreateDateColumn({
     type: 'timestamptz',

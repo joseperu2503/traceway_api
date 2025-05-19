@@ -17,6 +17,6 @@ import { UserLocationService } from './services/user-location.service';
     AuthModule,
     HttpModule,
   ],
-  exports: [LocationsService, UserLocationService],
+  exports: [LocationsService, UserLocationService, TypeOrmModule],
 })
-export class LocationModule {}
+export class LocationsModule {}
