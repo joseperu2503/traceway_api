@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -17,45 +16,52 @@ import { GeocodeRequest } from '../dto/geocode-request.dto';
 import { PlaceDetailsRequest } from '../dto/place-details-request.dto';
 import { GoogleMapsService } from '../services/google-maps.service';
 import { LocationsService } from '../services/locations.service';
+import { UserLocationService } from '../services/user-location.service';
 
 @Controller('locations')
 export class LocationsController {
   constructor(
     private readonly locationsService: LocationsService,
     private readonly googleMapsService: GoogleMapsService,
+    private readonly userLocationService: UserLocationService,
   ) {}
 
   @Post()
   @JwtAuth()
-  create(@GetUser() user: User, @Body() request: CreateLocationRequest) {
-    return this.locationsService.create({
-      ...request,
-      userId: user.id,
-    });
+  async create(@GetUser() user: User, @Body() request: CreateLocationRequest) {
+    let location = await this.locationsService.findByCordinates(
+      request.latitude,
+      request.longitude,
+    );
+
+    if (!location) {
+      location = await this.locationsService.create({ ...request });
+    }
+
+    await this.userLocationService.create(user.id, location.id);
+    return location;
   }
 
   @Get()
   @JwtAuth()
   findAll(@GetUser() user: User) {
-    return this.locationsService.findAll(user.id);
+    return this.locationsService.findAllByUser(user.id);
   }
 
-  @Delete(':id')
+  @Delete(':locationId')
   @JwtAuth()
-  async delete(@GetUser() user: User, @Param('id') id: string) {
-    const location = await this.locationsService.findOne(id);
+  async delete(@GetUser() user: User, @Param('locationId') locationId: string) {
+    const userLocation = await this.userLocationService.findOne(
+      user.id,
+      locationId,
+    );
 
-    if (!location) {
+    if (!userLocation) {
       throw new NotFoundException('Location not found');
     }
 
-    if (location.userId !== user.id) {
-      throw new ForbiddenException(
-        'You are not allowed to delete this location',
-      );
-    }
+    await this.userLocationService.delete(user.id, locationId);
 
-    await this.locationsService.delete(id);
     return { message: 'Location deleted successfully' };
   }
 

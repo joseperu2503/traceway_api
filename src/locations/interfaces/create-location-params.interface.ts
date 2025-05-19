@@ -3,5 +3,4 @@ export interface CreateLocationParams {
   secondaryText: string;
   latitude: number;
   longitude: number;
-  userId: string;
 }

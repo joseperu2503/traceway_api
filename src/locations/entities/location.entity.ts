@@ -1,10 +1,14 @@
+import { User } from 'src/auth/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserLocation } from './user-location.entity';
 
 @Entity('locations')
 export class Location {
@@ -23,8 +27,11 @@ export class Location {
   @Column('double precision')
   longitude: number;
 
-  @Column('text', { name: 'user_id' })
-  userId: string;
+  @ManyToMany(() => User, (user) => user.locations)
+  users: User[];
+
+  @OneToMany(() => UserLocation, (ul) => ul.location)
+  userLocations: UserLocation[];
 
   @CreateDateColumn({
     type: 'timestamptz',

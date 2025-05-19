@@ -4,5 +4,4 @@ export interface FindLocationResult {
   secondaryText: string;
   latitude: number;
   longitude: number;
-  userId: string;
 }
