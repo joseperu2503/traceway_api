@@ -1,12 +1,11 @@
 import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
+  Injectable
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Location } from '../entities/location.entity';
 import { CreateLocationParams } from '../interfaces/create-location-params.interface';
+import { FindLocationResult } from '../interfaces/find-location-result.interface';
 
 @Injectable()
 export class LocationsService {
@@ -24,20 +23,26 @@ export class LocationsService {
     return this.locationRepository.find({ where: { userId } });
   }
 
-  async delete(id: string, userId: string) {
-    const location = await this.locationRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<FindLocationResult | null> {
+    const location = await this.locationRepository.findOne({
+      where: { id },
+    });
 
     if (!location) {
-      throw new NotFoundException('Location not found');
+      return null;
     }
 
-    if (location.userId !== userId) {
-      throw new ForbiddenException(
-        'You are not allowed to delete this location',
-      );
-    }
+    return {
+      id: location.id,
+      mainText: location.mainText,
+      secondaryText: location.secondaryText,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      userId: location.userId,
+    };
+  }
 
-    await this.locationRepository.delete(id);
-    return { message: 'Location deleted successfully' };
+  async delete(id: string) {
+    return this.locationRepository.delete(id);
   }
 }
