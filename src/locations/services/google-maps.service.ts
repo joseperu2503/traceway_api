@@ -19,10 +19,8 @@ export class GoogleMapsService {
 
     const predictions = response.data.predictions.map((prediction) => ({
       placeId: prediction.place_id,
-      structuredFormatting: {
-        mainText: prediction.structured_formatting.main_text ?? '',
-        secondaryText: prediction.structured_formatting.secondary_text ?? '',
-      },
+      mainText: prediction.structured_formatting.main_text ?? '',
+      secondaryText: prediction.structured_formatting.secondary_text ?? '',
     }));
 
     return predictions;
@@ -44,27 +42,50 @@ export class GoogleMapsService {
 
     const results = response.data.results;
 
-    // Buscar el primer resultado con un componente de tipo 'route'
     for (const result of results) {
-      const routeComponent = result.address_components.find((component) =>
-        component.types.includes('route'),
+      const components = result.address_components;
+
+      const streetNumber = components.find((c) =>
+        c.types.includes('street_number'),
+      );
+      const route = components.find((c) => c.types.includes('route'));
+
+      // Si no hay ni calle ni número, pasa al siguiente resultado
+      if (!route && !streetNumber) continue;
+
+      const district = components.find(
+        (c) =>
+          c.types.includes('sublocality') ||
+          c.types.includes('sublocality_level_1') ||
+          c.types.includes('administrative_area_level_2'),
       );
 
-      if (routeComponent) {
-        // Encontrar country y locality
-        const countryComponent = result.address_components.find((component) =>
-          component.types.includes('country'),
-        );
-        const localityComponent = result.address_components.find((component) =>
-          component.types.includes('locality'),
-        );
+      const city = components.find(
+        (c) =>
+          c.types.includes('locality') ||
+          c.types.includes('administrative_area_level_1'),
+      );
 
-        return {
-          address: routeComponent.long_name,
-          country: countryComponent ? countryComponent.long_name : null,
-          locality: localityComponent ? localityComponent.long_name : null,
-        };
-      }
+      const country = components.find((c) => c.types.includes('country'));
+
+      // Componer mainText y secondaryText
+      const mainText = [route?.long_name, streetNumber?.long_name]
+        .filter(Boolean)
+        .join(' '); // Ej: "Avenida Arequipa 155"
+
+      const secondaryText = [
+        district?.long_name,
+        city?.long_name,
+        country?.long_name,
+      ]
+        .filter(Boolean)
+        .join(', '); // Ej: "Miraflores, Lima, Perú"
+
+      return {
+        mainText,
+        secondaryText,
+        placeId: result.place_id,
+      };
     }
   }
 }
