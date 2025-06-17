@@ -1,4 +1,4 @@
-export interface FindLocationResult {
+export interface FindPlaceResult {
   id: string;
   mainText: string;
   secondaryText: string;

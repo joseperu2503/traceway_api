@@ -4,7 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
-import { LocationsModule } from './locations/locations.module';
+import { PlacesModule } from './places/places.module';
 import { SeedCommand } from './seed/seed.command';
 import { SeedModule } from './seed/seed.module';
 import { TrackingModule } from './tracking/tracking.module';
@@ -26,7 +26,7 @@ import { TrackingModule } from './tracking/tracking.module';
     EventEmitterModule.forRoot(),
     SeedModule,
     AuthModule,
-    LocationsModule,
+    PlacesModule,
     TrackingModule,
   ],
   providers: [SeedCommand],

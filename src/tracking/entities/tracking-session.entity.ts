@@ -14,8 +14,8 @@ export class TrackingSession {
   @Column('text', { name: 'user_id' })
   userId: string;
 
-  @Column('text', { name: 'destination_location_id' })
-  destinationLocationId: string;
+  @Column('text', { name: 'destination_place_id' })
+  destinationPlaceId: string;
 
   @Column('text', { name: 'start_date' })
   startDate: Date;

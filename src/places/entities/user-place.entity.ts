@@ -8,20 +8,20 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Location } from './location.entity';
+import { Place } from './place.entity';
 
-@Entity('user_locations')
-export class UserLocation {
+@Entity('user_places')
+export class UserPlace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.userLocations)
+  @ManyToOne(() => User, (user) => user.userPlaces)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Location, (location) => location.userLocations)
-  @JoinColumn({ name: 'location_id' })
-  location: Location;
+  @ManyToOne(() => Place, (place) => place.userPlaces)
+  @JoinColumn({ name: 'place_id' })
+  place: Place;
 
   @Column({
     type: 'timestamptz',

@@ -5,11 +5,11 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 
-import { UserLocation } from 'src/locations/entities/user-location.entity';
-import { Location } from '../../locations/entities/location.entity';
+import { UserPlace } from 'src/places/entities/user-place.entity';
+import { Place } from '../../places/entities/place.entity';
 
 @Entity('users')
 export class User {
@@ -39,11 +39,11 @@ export class User {
   @Column('text')
   phone: string;
 
-  @ManyToMany(() => Location, (location) => location.users)
-  locations: Location[];
+  @ManyToMany(() => Place, (place) => place.users)
+  places: Place[];
 
-  @OneToMany(() => UserLocation, (ul) => ul.user)
-  userLocations: UserLocation[];
+  @OneToMany(() => UserPlace, (up) => up.user)
+  userPlaces: UserPlace[];
 
   @CreateDateColumn({
     type: 'timestamptz',

@@ -14,7 +14,7 @@ export class TrackingService {
   async startTrackingSession(params: StartTrackingSessionParams) {
     const trackingSession = await this.trackingSessionRepository.save({
       userId: params.userId,
-      destinationLocationId: params.destinationLocationId,
+      destinationPlaceId: params.destinationPlaceId,
       startDate: new Date(),
       endDate: new Date(),
       estimatedDateEnd: new Date(),
@@ -22,7 +22,7 @@ export class TrackingService {
 
     return {
       id: trackingSession.id,
-      destinationLocationId: trackingSession.destinationLocationId,
+      destinationPlaceId: trackingSession.destinationPlaceId,
       startDate: trackingSession.startDate,
       endDate: trackingSession.endDate,
       estimatedDateEnd: trackingSession.estimatedDateEnd,

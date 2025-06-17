@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserLocation } from './user-location.entity';
+import { UserPlace } from './user-place.entity';
 
-@Entity('locations')
-export class Location {
+@Entity('places')
+export class Place {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -27,11 +27,11 @@ export class Location {
   @Column('double precision')
   longitude: number;
 
-  @ManyToMany(() => User, (user) => user.locations)
+  @ManyToMany(() => User, (user) => user.places)
   users: User[];
 
-  @OneToMany(() => UserLocation, (ul) => ul.location)
-  userLocations: UserLocation[];
+  @OneToMany(() => UserPlace, (ul) => ul.place)
+  userPlaces: UserPlace[];
 
   @CreateDateColumn({
     type: 'timestamptz',
