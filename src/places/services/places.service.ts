@@ -16,6 +16,15 @@ export class PlacesService {
   ) {}
 
   async create(params: CreatePlaceParams) {
+    //Buscar si ya existe, por coordenadas
+    const placeExists = await this.placeRepository.findOne({
+      where: { latitude: params.latitude, longitude: params.longitude },
+    });
+
+    if (placeExists) {
+      return placeExists;
+    }
+
     const place = await this.placeRepository.save(params);
     return place;
   }

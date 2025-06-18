@@ -80,6 +80,6 @@ export class PlacesController {
 
   @Post('place-details')
   async placeDetails(@Body() request: PlaceDetailsRequest) {
-    return this.googleMapsService.placeDetails(request.placeId);
+    return this.googleMapsService.resultCoordinates(request.resultId);
   }
 }

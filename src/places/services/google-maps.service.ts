@@ -18,7 +18,7 @@ export class GoogleMapsService {
     const response = await firstValueFrom(this.httpService.get(url));
 
     const predictions = response.data.predictions.map((prediction) => ({
-      placeId: prediction.place_id,
+      resultId: prediction.place_id,
       mainText: prediction.structured_formatting.main_text ?? '',
       secondaryText: prediction.structured_formatting.secondary_text ?? '',
     }));
@@ -26,8 +26,8 @@ export class GoogleMapsService {
     return predictions;
   }
 
-  async placeDetails(placeId: string) {
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&fields=geometry&key=${this.googleMapsApiKey}`;
+  async resultCoordinates(resultId: string) {
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${resultId}&fields=geometry&key=${this.googleMapsApiKey}`;
 
     const response = await firstValueFrom(this.httpService.get(url));
     const geometry = response.data.result.geometry;
@@ -84,7 +84,6 @@ export class GoogleMapsService {
       return {
         mainText,
         secondaryText,
-        placeId: result.place_id,
       };
     }
   }
