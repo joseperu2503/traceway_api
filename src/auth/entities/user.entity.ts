@@ -1,15 +1,15 @@
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToMany,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 
-import { UserPlace } from 'src/places/entities/user-place.entity';
-import { Place } from '../../places/entities/place.entity';
+import { UserPlaceEntity } from 'src/places/entities/user-place.entity';
+import { PlaceEntity } from '../../places/entities/place.entity';
 
 @Entity('users')
 export class User {
@@ -39,11 +39,11 @@ export class User {
   @Column('text')
   phone: string;
 
-  @ManyToMany(() => Place, (place) => place.users)
-  places: Place[];
+  @ManyToMany(() => PlaceEntity, (place) => place.users)
+  places: PlaceEntity[];
 
-  @OneToMany(() => UserPlace, (up) => up.user)
-  userPlaces: UserPlace[];
+  @OneToMany(() => UserPlaceEntity, (up) => up.user)
+  userPlaces: UserPlaceEntity[];
 
   @CreateDateColumn({
     type: 'timestamptz',

@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { PlacesController } from './controllers/places.controller';
-import { Place } from './entities/place.entity';
-import { UserPlace } from './entities/user-place.entity';
+import { PlaceEntity } from './entities/place.entity';
+import { UserPlaceEntity } from './entities/user-place.entity';
 import { GoogleMapsService } from './services/google-maps.service';
 import { PlacesService } from './services/places.service';
 import { UserPlaceService } from './services/user-place.service';
@@ -13,7 +13,7 @@ import { UserPlaceService } from './services/user-place.service';
   controllers: [PlacesController],
   providers: [PlacesService, GoogleMapsService, UserPlaceService],
   imports: [
-    TypeOrmModule.forFeature([Place, UserPlace]),
+    TypeOrmModule.forFeature([PlaceEntity, UserPlaceEntity]),
     AuthModule,
     HttpModule,
   ],

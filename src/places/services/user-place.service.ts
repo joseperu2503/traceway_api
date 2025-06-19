@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserPlace } from '../entities/user-place.entity';
+import { UserPlaceEntity } from '../entities/user-place.entity';
 import { FindUserPlaceResult } from '../models/find-user-place-result';
 import { UpdateUserPlaceParams } from '../models/update-user-place-params';
 
 @Injectable()
 export class UserPlaceService {
   constructor(
-    @InjectRepository(UserPlace)
-    private readonly userPlaceRepository: Repository<UserPlace>,
+    @InjectRepository(UserPlaceEntity)
+    private readonly userPlaceRepository: Repository<UserPlaceEntity>,
   ) {}
 
   async create(userId: string, placeId: string) {

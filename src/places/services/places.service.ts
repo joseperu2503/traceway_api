@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Place } from '../entities/place.entity';
-import { UserPlace } from '../entities/user-place.entity';
+import { PlaceEntity } from '../entities/place.entity';
+import { UserPlaceEntity } from '../entities/user-place.entity';
 import { CreatePlaceParams } from '../models/create-place-params';
 import { FindPlaceResult } from '../models/find-place-result';
 
 @Injectable()
 export class PlacesService {
   constructor(
-    @InjectRepository(Place)
-    private readonly placeRepository: Repository<Place>,
-    @InjectRepository(UserPlace)
-    private readonly userPlaceRepository: Repository<UserPlace>,
+    @InjectRepository(PlaceEntity)
+    private readonly placeRepository: Repository<PlaceEntity>,
+    @InjectRepository(UserPlaceEntity)
+    private readonly userPlaceRepository: Repository<UserPlaceEntity>,
   ) {}
 
   async create(params: CreatePlaceParams) {

@@ -8,10 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserPlace } from './user-place.entity';
+import { PlaceModel } from '../models/place-model';
+import { UserPlaceEntity } from './user-place.entity';
 
 @Entity('places')
-export class Place {
+export class PlaceEntity implements PlaceModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -30,8 +31,8 @@ export class Place {
   @ManyToMany(() => User, (user) => user.places)
   users: User[];
 
-  @OneToMany(() => UserPlace, (ul) => ul.place)
-  userPlaces: UserPlace[];
+  @OneToMany(() => UserPlaceEntity, (ul) => ul.place)
+  userPlaces: UserPlaceEntity[];
 
   @CreateDateColumn({
     type: 'timestamptz',

@@ -17,13 +17,24 @@ export class TrackingSession {
   @Column('text', { name: 'destination_place_id' })
   destinationPlaceId: string;
 
-  @Column('text', { name: 'start_date' })
+  @Column({
+    type: 'timestamptz',
+    name: 'start_date',
+  })
   startDate: Date;
 
-  @Column('text', { name: 'end_date' })
-  endDate: Date;
+  @Column({
+    type: 'timestamptz',
+    name: 'end_date',
+    nullable: true,
+  })
+  endDate: Date | null;
 
-  @Column('text', { name: 'estimated_date_end' })
+  @Column({
+    type: 'timestamptz',
+    name: 'estimated_date_end',
+    nullable: true,
+  })
   estimatedDateEnd: Date;
 
   @CreateDateColumn({

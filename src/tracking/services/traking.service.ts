@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TrackingSession } from '../entities/tracking-session.entity';
-import { StartTrackingSessionParams } from '../interfaces/start-tracking-session-params.interface';
+import { StartTrackingSessionParams } from '../models/start-tracking-session-params.interface';
 
 @Injectable()
 export class TrackingService {
@@ -14,15 +14,14 @@ export class TrackingService {
   async startTrackingSession(params: StartTrackingSessionParams) {
     const trackingSession = await this.trackingSessionRepository.save({
       userId: params.userId,
-      destinationPlaceId: params.destinationPlaceId,
+      destinationPlaceId: params.destinationPlace.id,
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: null,
       estimatedDateEnd: new Date(),
     });
-
     return {
       id: trackingSession.id,
-      destinationPlaceId: trackingSession.destinationPlaceId,
+      destinationPlace: params.destinationPlace,
       startDate: trackingSession.startDate,
       endDate: trackingSession.endDate,
       estimatedDateEnd: trackingSession.estimatedDateEnd,

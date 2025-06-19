@@ -14,6 +14,7 @@ import { AutocompleteRequest } from '../dto/autocomplete-request.dto';
 import { CreatePlaceRequest } from '../dto/create-place-request.dto';
 import { GeocodeRequest } from '../dto/geocode-request.dto';
 import { PlaceDetailsRequest } from '../dto/place-details-request.dto';
+import { PlaceModel } from '../models/place-model';
 import { GoogleMapsService } from '../services/google-maps.service';
 import { PlacesService } from '../services/places.service';
 import { UserPlaceService } from '../services/user-place.service';
@@ -28,7 +29,10 @@ export class PlacesController {
 
   @Post()
   @JwtAuth()
-  async create(@GetUser() user: User, @Body() request: CreatePlaceRequest) {
+  async create(
+    @GetUser() user: User,
+    @Body() request: CreatePlaceRequest,
+  ): Promise<PlaceModel> {
     let place = await this.placesService.findByCordinates(
       request.latitude,
       request.longitude,
