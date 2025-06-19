@@ -1,13 +1,18 @@
+import { PlaceEntity } from 'src/places/entities/place.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { TrackingSessionModel } from '../models/tracking-session-model';
+import { TrackingSessionStatus } from './tracking-session-status.entity';
 
 @Entity('tracking_sessions')
-export class TrackingSession {
+export class TrackingSessionEntity implements TrackingSessionModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -16,6 +21,10 @@ export class TrackingSession {
 
   @Column('text', { name: 'destination_place_id' })
   destinationPlaceId: string;
+
+  @ManyToOne(() => PlaceEntity, (place) => place.trackingSessions)
+  @JoinColumn({ name: 'destination_place_id' })
+  destinationPlace: PlaceEntity;
 
   @Column({
     type: 'timestamptz',
@@ -32,10 +41,17 @@ export class TrackingSession {
 
   @Column({
     type: 'timestamptz',
-    name: 'estimated_date_end',
+    name: 'estimated_end_date',
     nullable: true,
   })
-  estimatedDateEnd: Date;
+  estimatedEndDate: Date;
+
+  @ManyToOne(() => TrackingSessionStatus, (status) => status.trackingSessions)
+  @JoinColumn({ name: 'status_id' })
+  status: TrackingSessionStatus;
+
+  @Column({ name: 'status_id' })
+  statusId: string;
 
   @CreateDateColumn({
     type: 'timestamptz',

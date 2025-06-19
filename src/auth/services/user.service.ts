@@ -14,14 +14,4 @@ export class UserService {
     const user = await this.userRepository.findOneBy({ id: userId });
     return user;
   }
-
-  async UpdateTrackingSession(
-    userId: string,
-    trackingSessionId: string | null,
-  ) {
-    return this.userRepository.update(
-      { id: userId },
-      { activeTrackingSessionId: trackingSessionId },
-    );
-  }
 }

@@ -1,4 +1,5 @@
 import { User } from 'src/auth/entities/user.entity';
+import { TrackingSessionEntity } from 'src/tracking/entities/tracking-session.entity';
 import {
   Column,
   CreateDateColumn,
@@ -33,6 +34,9 @@ export class PlaceEntity implements PlaceModel {
 
   @OneToMany(() => UserPlaceEntity, (ul) => ul.place)
   userPlaces: UserPlaceEntity[];
+
+  @OneToMany(() => TrackingSessionEntity, (ts) => ts.status)
+  trackingSessions: TrackingSessionEntity[];
 
   @CreateDateColumn({
     type: 'timestamptz',

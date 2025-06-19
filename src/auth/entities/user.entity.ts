@@ -59,7 +59,4 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-
-  @Column('uuid', { name: 'active_tracking_session_id', nullable: true })
-  activeTrackingSessionId: string | null;
 }
