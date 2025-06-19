@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('traking_sessions')
+@Entity('tracking_sessions')
 export class TrackingSession {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -20,12 +20,12 @@ export class LoginRequest {
 
 export class LoginUserGoogleDto {
   @IsString()
-  idToken: string;
+  token: string;
 }
 
 export class LoginUserFacebookDto {
   @IsString()
-  accessToken: string;
+  token: string;
 
   @IsString()
   @IsIn(['android', 'ios'])

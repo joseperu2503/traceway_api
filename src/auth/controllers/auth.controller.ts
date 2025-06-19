@@ -1,22 +1,17 @@
-import { Body, Controller, Get, HttpCode, Post, Put } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiExcludeEndpoint,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { GetUser } from '../decorators/get-user.decorator';
-import { JwtAuth } from '../decorators/jwt-auth.decorator';
 import {
   LoginRequest,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
 } from '../dto/login-request.dto';
 import { RegisterRequest } from '../dto/register-request.dto';
-import { UpdateAuthDto } from '../dto/update-auth.dto';
-import { User } from '../entities/user.entity';
 import { AuthService } from '../services/auth.service';
 
 @ApiTags('Authentication')
@@ -73,26 +68,5 @@ export class AuthController {
   @Post('login-facebook')
   loginFacebook(@Body() loginUserDto: LoginUserFacebookDto) {
     return this.authService.loginFacebook(loginUserDto);
-  }
-
-  @Put('update')
-  @ApiExcludeEndpoint()
-  @JwtAuth()
-  update(@GetUser() user: User, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(user, updateAuthDto);
-  }
-
-  @Get('me')
-  @ApiOperation({
-    summary: "Retrieve the authenticated user's details",
-  })
-  @JwtAuth()
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized.',
-  })
-  @ApiBearerAuth()
-  me(@GetUser() user: User) {
-    return this.authService.me(user);
   }
 }

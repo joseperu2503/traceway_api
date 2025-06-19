@@ -7,18 +7,18 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { DataSource, Repository } from 'typeorm';
+import { AuthResponseDto } from '../dto/auth-response.dto';
 import {
   LoginRequest,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
 } from '../dto/login-request.dto';
 import { RegisterRequest } from '../dto/register-request.dto';
-import { UpdateAuthDto } from '../dto/update-auth.dto';
 import { User } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interfaces';
 import { FacebookService } from './facebook.service';
+import { GoogleService } from './google.service';
 
 @Injectable()
 export class AuthService {
@@ -28,9 +28,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly dataSource: DataSource,
     private readonly facebookService: FacebookService,
+    private readonly googleService: GoogleService,
   ) {}
 
-  async register(registerUserDto: RegisterRequest) {
+  async register(registerUserDto: RegisterRequest): Promise<AuthResponseDto> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -47,9 +48,7 @@ export class AuthService {
       await queryRunner.commitTransaction();
       await queryRunner.release();
 
-      const me = this.me(user);
-
-      return { user: me, token: this.getJwt({ id: user.id }) };
+      return this.buildAuthResponse(user);
     } catch (error) {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
@@ -76,51 +75,16 @@ export class AuthService {
     if (!bcrypt.compareSync(password, user.password)) {
       throw new UnauthorizedException(`Credentials are not valid`);
     }
-    const me = this.me(user);
-    return { user: me, token: this.getJwt({ id: user.id }) };
+
+    return this.buildAuthResponse(user);
   }
 
-  async loginGoogle(loginUserDto: LoginUserGoogleDto) {
-    const { idToken } = loginUserDto;
+  async loginGoogle(
+    loginUserDto: LoginUserGoogleDto,
+  ): Promise<AuthResponseDto> {
+    const { token } = loginUserDto;
 
-    const client = new OAuth2Client({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const ticket = await client.verifyIdToken({
-      idToken: idToken,
-    });
-
-    const payload: TokenPayload | undefined = ticket.getPayload();
-
-    if (!payload) {
-      throw new UnauthorizedException(`Invalid token`);
-    }
-
-    const email = payload.email;
-
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException(`Unregistered user`);
-    }
-
-    const me = this.me(user);
-    return { user: me, token: this.getJwt({ id: user.id }) };
-  }
-
-  async loginFacebook(loginUserDto: LoginUserFacebookDto) {
-    const { accessToken, platform } = loginUserDto;
-
-    let email: string | null = null;
-
-    if (platform == 'android') {
-      email = await this.facebookService.validateAndroidToken(accessToken);
-    } else {
-      email = await this.facebookService.validateIosJwt(accessToken);
-    }
+    const email = await this.googleService.validateToken(token);
 
     if (!email) {
       throw new UnauthorizedException(`Invalid token`);
@@ -134,27 +98,32 @@ export class AuthService {
       throw new UnauthorizedException(`Unregistered user`);
     }
 
-    const me = this.me(user);
-    return { user: me, token: this.getJwt({ id: user.id }) };
+    return this.buildAuthResponse(user);
   }
 
-  me(user: User) {
-    const { id, email, name, surname, phone } = user;
+  async loginFacebook(
+    loginUserDto: LoginUserFacebookDto,
+  ): Promise<AuthResponseDto> {
+    const { token: accessToken, platform } = loginUserDto;
 
-    return {
-      id,
-      email,
-      name,
-      surname,
-      phone,
-    };
-  }
+    const email: string | null = await this.facebookService.validateToken(
+      accessToken,
+      platform,
+    );
 
-  async update(user: User, UpdateAuthDto: UpdateAuthDto) {
-    this.userRepository.merge(user, UpdateAuthDto);
+    if (!email) {
+      throw new UnauthorizedException(`Invalid token`);
+    }
 
-    await this.userRepository.save(user);
-    return this.me(user);
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException(`Unregistered user`);
+    }
+
+    return this.buildAuthResponse(user);
   }
 
   private getJwt(payload: JwtPayload) {
@@ -162,8 +131,16 @@ export class AuthService {
     return token;
   }
 
-  async findOne(userId: string): Promise<User | null> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    return user;
+  private buildAuthResponse(user: User): AuthResponseDto {
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        phone: user.phone,
+      },
+      token: this.getJwt({ id: user.id }),
+    };
   }
 }

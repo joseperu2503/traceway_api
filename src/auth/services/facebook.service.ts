@@ -1,7 +1,7 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import jwks from 'jwks-rsa';
-import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -12,7 +12,18 @@ export class FacebookService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async validateIosJwt(token: string): Promise<string | null> {
+  async validateToken(
+    token: string,
+    platform: 'android' | 'ios',
+  ): Promise<string | null> {
+    if (platform === 'android') {
+      return this.validateTokenAndroid(token);
+    } else {
+      return this.validateTokenIos(token);
+    }
+  }
+
+  async validateTokenIos(token: string): Promise<string | null> {
     //** https://developers.facebook.com/docs/facebook-login/limited-login/token/?locale=es_ES#jwks */
 
     const appId: string | undefined = process.env.FACEBOOK_APP_ID;
@@ -69,7 +80,7 @@ export class FacebookService {
   }
 
   // Función para validar el token estándar en Android
-  async validateAndroidToken(accessToken: string): Promise<string | null> {
+  async validateTokenAndroid(accessToken: string): Promise<string | null> {
     //** https://developers.facebook.com/docs/graph-api/overview/ */
     try {
       const appId: string | undefined = process.env.FACEBOOK_APP_ID;
