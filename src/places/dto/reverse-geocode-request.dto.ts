@@ -1,6 +1,6 @@
 import { IsNumber } from 'class-validator';
 
-export class GeocodeRequest {
+export class ReverseGeocodeRequest {
   @IsNumber()
   latitude: number;
 

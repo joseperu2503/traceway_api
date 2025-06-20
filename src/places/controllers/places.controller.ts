@@ -10,12 +10,11 @@ import {
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { JwtAuth } from 'src/auth/decorators/jwt-auth.decorator';
 import { User } from 'src/auth/entities/user.entity';
-import { AutocompleteRequest } from '../dto/autocomplete-request.dto';
 import { CreatePlaceRequest } from '../dto/create-place-request.dto';
-import { GeocodeRequest } from '../dto/geocode-request.dto';
-import { PlaceDetailsRequest } from '../dto/place-details-request.dto';
+import { getSuggestionGeometryRequest } from '../dto/get-suggestion-geometry-request.dto';
+import { GetSuggestionsRequest } from '../dto/get-suggestions-request.dto';
+import { ReverseGeocodeRequest } from '../dto/reverse-geocode-request.dto';
 import { PlaceModel } from '../models/place-model';
-import { GoogleMapsService } from '../services/google-maps.service';
 import { PlacesService } from '../services/places.service';
 import { UserPlaceService } from '../services/user-place.service';
 
@@ -23,7 +22,6 @@ import { UserPlaceService } from '../services/user-place.service';
 export class PlacesController {
   constructor(
     private readonly placesService: PlacesService,
-    private readonly googleMapsService: GoogleMapsService,
     private readonly userPlaceService: UserPlaceService,
   ) {}
 
@@ -71,19 +69,19 @@ export class PlacesController {
     return { message: 'Place deleted successfully' };
   }
 
-  @Post('autocomplete')
-  async autocomplete(@Body() request: AutocompleteRequest) {
-    return this.googleMapsService.autocomplete(request.input);
+  @Post('suggestions')
+  async suggestions(@Body() request: GetSuggestionsRequest) {
+    return this.placesService.suggestions(request.query);
   }
 
-  @Post('geocode')
-  async geocode(@Body() request: GeocodeRequest) {
+  @Post('reverse-geocode')
+  async reverseGeocode(@Body() request: ReverseGeocodeRequest) {
     const { latitude, longitude } = request;
-    return this.googleMapsService.geocode(latitude, longitude);
+    return this.placesService.reverseGeocode(latitude, longitude);
   }
 
-  @Post('place-details')
-  async placeDetails(@Body() request: PlaceDetailsRequest) {
-    return this.googleMapsService.resultCoordinates(request.resultId);
+  @Post('suggestion-geometry')
+  async getSuggestionGeometry(@Body() request: getSuggestionGeometryRequest) {
+    return this.placesService.getSuggestionGeometry(request.suggestionId);
   }
 }

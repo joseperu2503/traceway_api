@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class AutocompleteRequest {
+export class GetSuggestionsRequest {
   @IsString()
-  input: string;
+  query: string;
 }
