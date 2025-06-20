@@ -8,30 +8,30 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
-import { AuthResponseDto } from '../dto/auth-response.dto';
+import { AuthResponse } from '../dto/auth-response.dto';
 import {
   LoginRequest,
   LoginUserFacebookDto,
   LoginUserGoogleDto,
 } from '../dto/login-request.dto';
 import { RegisterRequest } from '../dto/register-request.dto';
-import { User } from '../entities/user.entity';
-import { JwtPayload } from '../interfaces/jwt-payload.interfaces';
+import { UserEntity } from '../entities/user.entity';
+import { JwtPayload } from '../models/jwt-payload';
 import { FacebookService } from './facebook.service';
 import { GoogleService } from './google.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
     private readonly dataSource: DataSource,
     private readonly facebookService: FacebookService,
     private readonly googleService: GoogleService,
   ) {}
 
-  async register(registerUserDto: RegisterRequest): Promise<AuthResponseDto> {
+  async register(registerUserDto: RegisterRequest): Promise<AuthResponse> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -81,7 +81,7 @@ export class AuthService {
 
   async loginGoogle(
     loginUserDto: LoginUserGoogleDto,
-  ): Promise<AuthResponseDto> {
+  ): Promise<AuthResponse> {
     const { token } = loginUserDto;
 
     const email = await this.googleService.validateToken(token);
@@ -103,7 +103,7 @@ export class AuthService {
 
   async loginFacebook(
     loginUserDto: LoginUserFacebookDto,
-  ): Promise<AuthResponseDto> {
+  ): Promise<AuthResponse> {
     const { token: accessToken, platform } = loginUserDto;
 
     const email: string | null = await this.facebookService.validateToken(
@@ -131,7 +131,7 @@ export class AuthService {
     return token;
   }
 
-  private buildAuthResponse(user: User): AuthResponseDto {
+  private buildAuthResponse(user: UserEntity): AuthResponse {
     return {
       user: {
         id: user.id,

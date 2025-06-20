@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { PlaceEntity } from '../entities/place.entity';
 import { UserPlaceEntity } from '../entities/user-place.entity';
 import { FindOrCreatePlaceParams } from '../models/find-or-create-place-params';
-import { FindPlaceResult } from '../models/find-place-result';
 import { PlaceModel } from '../models/place-model';
 import { GoogleMapsHttpService } from './google-maps.service';
 
@@ -37,7 +36,7 @@ export class PlacesService {
     }));
   }
 
-  async findOne(id: string): Promise<FindPlaceResult | null> {
+  async findOne(id: string): Promise<PlaceModel | null> {
     const place = await this.placeRepository.findOne({
       where: { id },
     });

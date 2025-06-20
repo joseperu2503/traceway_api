@@ -1,4 +1,4 @@
-import { User } from 'src/auth/entities/user.entity';
+import { UserEntity } from 'src/auth/entities/user.entity';
 import { TrackingSessionEntity } from 'src/tracking/entities/tracking-session.entity';
 import {
   Column,
@@ -29,8 +29,8 @@ export class PlaceEntity implements PlaceModel {
   @Column('double precision')
   longitude: number;
 
-  @ManyToMany(() => User, (user) => user.places)
-  users: User[];
+  @ManyToMany(() => UserEntity, (user) => user.places)
+  users: UserEntity[];
 
   @OneToMany(() => UserPlaceEntity, (ul) => ul.place)
   userPlaces: UserPlaceEntity[];

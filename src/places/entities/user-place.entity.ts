@@ -1,4 +1,4 @@
-import { User } from 'src/auth/entities/user.entity';
+import { UserEntity } from 'src/auth/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { PlaceEntity } from './place.entity';
 
@@ -10,9 +10,9 @@ export class UserPlaceEntity {
   @PrimaryColumn({ name: 'place_id', type: 'uuid' })
   placeId: string;
 
-  @ManyToOne(() => User, (user) => user.userPlaces)
+  @ManyToOne(() => UserEntity, (user) => user.userPlaces)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: UserEntity;
 
   @ManyToOne(() => PlaceEntity, (place) => place.userPlaces)
   @JoinColumn({ name: 'place_id' })
