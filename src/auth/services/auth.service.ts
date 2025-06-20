@@ -17,6 +17,7 @@ import {
 import { RegisterRequest } from '../dto/register-request.dto';
 import { UserEntity } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { User } from '../models/user.model';
 import { FacebookService } from './facebook.service';
 import { GoogleService } from './google.service';
 
@@ -131,7 +132,7 @@ export class AuthService {
     return token;
   }
 
-  private buildAuthResponse(user: UserEntity): AuthResponse {
+  private buildAuthResponse(user: User): AuthResponse {
     return {
       user: {
         id: user.id,

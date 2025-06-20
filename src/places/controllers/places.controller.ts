@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { JwtAuth } from 'src/auth/decorators/jwt-auth.decorator';
-import { UserEntity } from 'src/auth/entities/user.entity';
+import { User } from 'src/auth/models/user.model';
 import { FindOrCreatePlaceRequest } from '../dto/find-or-create-place-request.dto';
 import { getSuggestionGeometryRequest } from '../dto/get-suggestion-geometry-request.dto';
 import { GetSuggestionsRequest } from '../dto/get-suggestions-request.dto';
@@ -20,7 +20,7 @@ export class PlacesController {
   @Post('find-or-create')
   @JwtAuth()
   async findPlace(
-    @GetUser() user: UserEntity,
+    @GetUser() user: User,
     @Body() request: FindOrCreatePlaceRequest,
   ): Promise<PlaceModel> {
     const place = await this.placesService.findOrCreate(request);
@@ -30,13 +30,13 @@ export class PlacesController {
 
   @Get()
   @JwtAuth()
-  findAll(@GetUser() user: UserEntity) {
+  findAll(@GetUser() user: User) {
     return this.placesService.findAllByUser(user.id);
   }
 
   @Delete(':placeId')
   @JwtAuth()
-  async delete(@GetUser() user: UserEntity, @Param('placeId') placeId: string) {
+  async delete(@GetUser() user: User, @Param('placeId') placeId: string) {
     return this.userPlaceService.delete(user.id, placeId);
   }
 

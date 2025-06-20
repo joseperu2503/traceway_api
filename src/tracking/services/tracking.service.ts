@@ -6,7 +6,7 @@ import { PlacesService } from 'src/places/services/places.service';
 import { UserPlaceService } from 'src/places/services/user-place.service';
 import { Repository } from 'typeorm';
 import { TrackingSessionEntity } from '../entities/tracking-session.entity';
-import { StartTrackingSessionParams } from '../models/start-tracking-session-params';
+import { StartTrackingSessionParams } from '../interfaces/start-tracking-session-params';
 import { TrackingSessionModel } from '../models/tracking-session-model';
 
 @Injectable()

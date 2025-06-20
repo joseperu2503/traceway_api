@@ -10,9 +10,10 @@ import {
 
 import { UserPlaceEntity } from 'src/places/entities/user-place.entity';
 import { PlaceEntity } from '../../places/entities/place.entity';
+import { User } from '../models/user.model';
 
 @Entity('users')
-export class UserEntity {
+export class UserEntity implements User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
