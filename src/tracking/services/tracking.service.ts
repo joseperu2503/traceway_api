@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingSessionStatusEnum } from 'src/common/enums/tracking-session-status.enum';
-import { PlaceModel } from 'src/places/models/place-model';
+import { Place } from 'src/places/models/place.model';
 import { PlacesService } from 'src/places/services/places.service';
 import { UserPlaceService } from 'src/places/services/user-place.service';
 import { Repository } from 'typeorm';
 import { TrackingSessionEntity } from '../entities/tracking-session.entity';
 import { StartTrackingSessionParams } from '../interfaces/start-tracking-session-params';
-import { TrackingSessionModel } from '../models/tracking-session-model';
+import { TrackingSession } from '../models/tracking-session.model';
 
 @Injectable()
 export class TrackingService {
@@ -20,9 +20,9 @@ export class TrackingService {
 
   async startTrackingSession(
     params: StartTrackingSessionParams,
-  ): Promise<TrackingSessionModel> {
+  ): Promise<TrackingSession> {
     const { userId, destinationPlaceId, radius: distance } = params;
-    let place: PlaceModel | null =
+    let place: Place | null =
       await this.placesService.findOne(destinationPlaceId);
 
     if (!place) {

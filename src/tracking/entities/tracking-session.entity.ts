@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { TrackingSessionModel } from '../models/tracking-session-model';
+import { TrackingSession } from '../models/tracking-session.model';
 import { TrackingSessionStatus } from './tracking-session-status.entity';
 
 @Entity('tracking_sessions')
-export class TrackingSessionEntity implements TrackingSessionModel {
+export class TrackingSessionEntity implements TrackingSession {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

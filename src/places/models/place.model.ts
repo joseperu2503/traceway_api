@@ -1,4 +1,4 @@
-export class PlaceModel {
+export class Place {
   id: string;
   mainText: string;
   secondaryText: string;

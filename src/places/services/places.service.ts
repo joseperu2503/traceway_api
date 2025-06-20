@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { PlaceEntity } from '../entities/place.entity';
 import { UserPlaceEntity } from '../entities/user-place.entity';
 import { FindOrCreatePlaceParams } from '../interfaces/find-or-create-place-params';
-import { PlaceModel } from '../models/place-model';
+import { Place } from '../models/place.model';
 import { GoogleMapsHttpService } from './google-maps.service';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class PlacesService {
     }));
   }
 
-  async findOne(id: string): Promise<PlaceModel | null> {
+  async findOne(id: string): Promise<Place | null> {
     const place = await this.placeRepository.findOne({
       where: { id },
     });
@@ -54,7 +54,7 @@ export class PlacesService {
     };
   }
 
-  async findOrCreate(params: FindOrCreatePlaceParams): Promise<PlaceModel> {
+  async findOrCreate(params: FindOrCreatePlaceParams): Promise<Place> {
     const place = await this.placeRepository.findOne({
       where: {
         latitude: params.latitude,

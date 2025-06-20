@@ -6,7 +6,7 @@ import { FindOrCreatePlaceRequest } from '../dto/find-or-create-place-request.dt
 import { getSuggestionGeometryRequest } from '../dto/get-suggestion-geometry-request.dto';
 import { GetSuggestionsRequest } from '../dto/get-suggestions-request.dto';
 import { ReverseGeocodeRequest } from '../dto/reverse-geocode-request.dto';
-import { PlaceModel } from '../models/place-model';
+import { Place } from '../models/place.model';
 import { PlacesService } from '../services/places.service';
 import { UserPlaceService } from '../services/user-place.service';
 
@@ -22,7 +22,7 @@ export class PlacesController {
   async findPlace(
     @GetUser() user: User,
     @Body() request: FindOrCreatePlaceRequest,
-  ): Promise<PlaceModel> {
+  ): Promise<Place> {
     const place = await this.placesService.findOrCreate(request);
     await this.userPlaceService.registerUsage(user.id, place.id);
     return place;

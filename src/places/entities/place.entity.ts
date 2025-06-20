@@ -9,11 +9,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PlaceModel } from '../models/place-model';
+import { Place } from '../models/place.model';
 import { UserPlaceEntity } from './user-place.entity';
 
 @Entity('places')
-export class PlaceEntity implements PlaceModel {
+export class PlaceEntity implements Place {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

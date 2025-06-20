@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserPlaceEntity } from '../entities/user-place.entity';
-import { UserPlaceModel } from '../models/user-place-model';
+import { UserPlace } from '../models/user-place.model';
 
 @Injectable()
 export class UserPlaceService {
@@ -11,7 +11,7 @@ export class UserPlaceService {
     private readonly userPlaceRepository: Repository<UserPlaceEntity>,
   ) {}
 
-  async create(userId: string, placeId: string): Promise<UserPlaceModel> {
+  async create(userId: string, placeId: string): Promise<UserPlace> {
     const userPlace = await this.userPlaceRepository.save({
       user: { id: userId },
       place: { id: placeId },
@@ -20,7 +20,7 @@ export class UserPlaceService {
     return userPlace;
   }
 
-  async findOrCreate(userId: string, placeId: string): Promise<UserPlaceModel> {
+  async findOrCreate(userId: string, placeId: string): Promise<UserPlace> {
     const userPlace = await this.userPlaceRepository.findOne({
       where: {
         user: { id: userId },
