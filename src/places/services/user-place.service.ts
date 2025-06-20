@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserPlaceEntity } from '../entities/user-place.entity';
-import { FindUserPlaceResult } from '../models/find-user-place-result';
-import { UpdateUserPlaceParams } from '../models/update-user-place-params';
+import { UserPlaceModel } from '../models/user-place-model';
 
 @Injectable()
 export class UserPlaceService {
@@ -12,58 +11,61 @@ export class UserPlaceService {
     private readonly userPlaceRepository: Repository<UserPlaceEntity>,
   ) {}
 
-  async create(userId: string, placeId: string) {
+  async create(userId: string, placeId: string): Promise<UserPlaceModel> {
     const userPlace = await this.userPlaceRepository.save({
       user: { id: userId },
       place: { id: placeId },
     });
 
-    return {
-      id: userPlace.id,
-      userId: userId,
-      placeId: placeId,
-    };
+    return userPlace;
   }
 
-  async findOne(
-    userId: string,
-    placeId: string,
-  ): Promise<FindUserPlaceResult | null> {
+  async findOrCreate(userId: string, placeId: string): Promise<UserPlaceModel> {
     const userPlace = await this.userPlaceRepository.findOne({
       where: {
         user: { id: userId },
         place: { id: placeId },
       },
-      relations: {
-        place: true,
-        user: true,
-      },
     });
 
-    if (!userPlace) return null;
+    if (userPlace) {
+      return userPlace;
+    }
 
-    return {
-      userId: userPlace.user.id,
-      placeId: userPlace.place.id,
-    };
+    return this.create(userId, placeId);
   }
 
-  async delete(userId: string, placeId: string): Promise<void> {
+  async delete(userId: string, placeId: string) {
     await this.userPlaceRepository.delete({
       user: { id: userId },
       place: { id: placeId },
     });
+
+    return { message: 'Place deleted successfully' };
   }
 
-  async update(userId: string, placeId: string, params: UpdateUserPlaceParams) {
+  async updateLastUsedAt(
+    userId: string,
+    placeId: string,
+    date: Date = new Date(),
+  ): Promise<void> {
     await this.userPlaceRepository.update(
       {
         user: { id: userId },
         place: { id: placeId },
       },
       {
-        lastUsedAt: params.lastUsedAt,
+        lastUsedAt: date,
       },
     );
+  }
+
+  async registerUsage(
+    userId: string,
+    placeId: string,
+    date: Date = new Date(),
+  ) {
+    const userPlace = await this.findOrCreate(userId, placeId);
+    await this.updateLastUsedAt(userId, placeId, date);
   }
 }

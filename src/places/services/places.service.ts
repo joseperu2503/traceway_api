@@ -4,8 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PlaceEntity } from '../entities/place.entity';
 import { UserPlaceEntity } from '../entities/user-place.entity';
-import { CreatePlaceParams } from '../models/create-place-params';
+import { FindOrCreatePlaceParams } from '../models/find-or-create-place-params';
 import { FindPlaceResult } from '../models/find-place-result';
+import { PlaceModel } from '../models/place-model';
 import { GoogleMapsHttpService } from './google-maps.service';
 
 @Injectable()
@@ -18,20 +19,6 @@ export class PlacesService {
 
     private readonly googleMapsService: GoogleMapsHttpService,
   ) {}
-
-  async create(params: CreatePlaceParams) {
-    //Buscar si ya existe, por coordenadas
-    const placeExists = await this.placeRepository.findOne({
-      where: { latitude: params.latitude, longitude: params.longitude },
-    });
-
-    if (placeExists) {
-      return placeExists;
-    }
-
-    const place = await this.placeRepository.save(params);
-    return place;
-  }
 
   async findAllByUser(userId: string) {
     const userPlaces = await this.userPlaceRepository.find({
@@ -68,28 +55,19 @@ export class PlacesService {
     };
   }
 
-  async findByCordinates(latitude: number, longitude: number) {
+  async findOrCreate(params: FindOrCreatePlaceParams): Promise<PlaceModel> {
     const place = await this.placeRepository.findOne({
       where: {
-        latitude,
-        longitude,
-      },
-      relations: {
-        userPlaces: true,
+        latitude: params.latitude,
+        longitude: params.longitude,
       },
     });
 
-    if (!place) {
-      return null;
+    if (place) {
+      return place;
     }
 
-    return {
-      id: place.id,
-      mainText: place.mainText,
-      secondaryText: place.secondaryText,
-      latitude: place.latitude,
-      longitude: place.longitude,
-    };
+    return this.placeRepository.save(params);
   }
 
   async delete(id: string) {

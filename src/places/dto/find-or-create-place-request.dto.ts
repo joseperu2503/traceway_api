@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 
-export class CreatePlaceRequest {
+export class FindOrCreatePlaceRequest {
   @IsNumber()
   latitude: number;
 

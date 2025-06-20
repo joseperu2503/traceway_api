@@ -1,19 +1,14 @@
 import { User } from 'src/auth/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { PlaceEntity } from './place.entity';
 
 @Entity('user_places')
 export class UserPlaceEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn({ name: 'user_id', type: 'uuid' })
+  userId: string;
+
+  @PrimaryColumn({ name: 'place_id', type: 'uuid' })
+  placeId: string;
 
   @ManyToOne(() => User, (user) => user.userPlaces)
   @JoinColumn({ name: 'user_id' })
@@ -26,22 +21,6 @@ export class UserPlaceEntity {
   @Column({
     type: 'timestamptz',
     name: 'last_used_at',
-    nullable: true,
   })
-  lastUsedAt: Date | null;
-
-  @CreateDateColumn({
-    type: 'timestamptz',
-    name: 'created_at',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
-
-  @UpdateDateColumn({
-    type: 'timestamptz',
-    name: 'updated_at',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
-  updatedAt: Date;
+  lastUsedAt: Date;
 }

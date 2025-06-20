@@ -1,4 +1,4 @@
-export interface CreatePlaceParams {
+export interface FindOrCreatePlaceParams {
   mainText: string;
   secondaryText: string;
   latitude: number;

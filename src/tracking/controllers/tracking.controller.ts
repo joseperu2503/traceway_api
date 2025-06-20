@@ -20,7 +20,7 @@ export class TrackingController {
     return await this.trackingService.startTrackingSession({
       userId: user.id,
       destinationPlaceId: request.destinationPlaceId,
-      distance: request.distance,
+      radius: request.radius,
     });
   }
 

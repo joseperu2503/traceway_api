@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { JwtAuth } from 'src/auth/decorators/jwt-auth.decorator';
 import { User } from 'src/auth/entities/user.entity';
-import { CreatePlaceRequest } from '../dto/create-place-request.dto';
+import { FindOrCreatePlaceRequest } from '../dto/find-or-create-place-request.dto';
 import { getSuggestionGeometryRequest } from '../dto/get-suggestion-geometry-request.dto';
 import { GetSuggestionsRequest } from '../dto/get-suggestions-request.dto';
 import { ReverseGeocodeRequest } from '../dto/reverse-geocode-request.dto';
@@ -25,27 +17,14 @@ export class PlacesController {
     private readonly userPlaceService: UserPlaceService,
   ) {}
 
-  @Post()
+  @Post('find-or-create')
   @JwtAuth()
-  async create(
+  async findPlace(
     @GetUser() user: User,
-    @Body() request: CreatePlaceRequest,
+    @Body() request: FindOrCreatePlaceRequest,
   ): Promise<PlaceModel> {
-    let place = await this.placesService.findByCordinates(
-      request.latitude,
-      request.longitude,
-    );
-
-    if (!place) {
-      place = await this.placesService.create({
-        latitude: request.latitude,
-        longitude: request.longitude,
-        mainText: request.mainText,
-        secondaryText: request.secondaryText,
-      });
-    }
-
-    await this.userPlaceService.create(user.id, place.id);
+    const place = await this.placesService.findOrCreate(request);
+    await this.userPlaceService.registerUsage(user.id, place.id);
     return place;
   }
 
@@ -58,15 +37,7 @@ export class PlacesController {
   @Delete(':placeId')
   @JwtAuth()
   async delete(@GetUser() user: User, @Param('placeId') placeId: string) {
-    const userPlace = await this.userPlaceService.findOne(user.id, placeId);
-
-    if (!userPlace) {
-      throw new NotFoundException('Place not found');
-    }
-
-    await this.userPlaceService.delete(user.id, placeId);
-
-    return { message: 'Place deleted successfully' };
+    return this.userPlaceService.delete(user.id, placeId);
   }
 
   @Post('suggestions')

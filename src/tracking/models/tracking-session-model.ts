@@ -7,4 +7,5 @@ export interface TrackingSessionModel {
   endDate: Date | null;
   estimatedEndDate: Date;
   statusId: string;
+  radius: number;
 }

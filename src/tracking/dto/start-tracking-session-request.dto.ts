@@ -5,5 +5,5 @@ export class StartTrackingSessionRequest {
   destinationPlaceId: string;
 
   @IsNumber()
-  distance: number;
+  radius: number;
 }

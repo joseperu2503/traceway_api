@@ -22,6 +22,9 @@ export class TrackingSessionEntity implements TrackingSessionModel {
   @Column('text', { name: 'destination_place_id' })
   destinationPlaceId: string;
 
+  @Column('double precision')
+  radius: number;
+
   @ManyToOne(() => PlaceEntity, (place) => place.trackingSessions)
   @JoinColumn({ name: 'destination_place_id' })
   destinationPlace: PlaceEntity;
