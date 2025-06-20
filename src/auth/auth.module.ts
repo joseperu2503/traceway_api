@@ -8,18 +8,11 @@ import { UserEntity } from './entities/user.entity';
 import { AuthService } from './services/auth.service';
 import { FacebookService } from './services/facebook.service';
 import { GoogleService } from './services/google.service';
-import { UserService } from './services/user.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    FacebookService,
-    UserService,
-    GoogleService,
-  ],
+  providers: [AuthService, JwtStrategy, FacebookService, GoogleService],
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -36,13 +29,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
     HttpModule,
   ],
-  exports: [
-    TypeOrmModule,
-    JwtStrategy,
-    PassportModule,
-    JwtModule,
-    AuthService,
-    UserService,
-  ],
+  exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule, AuthService],
 })
 export class AuthModule {}

@@ -16,7 +16,7 @@ import {
 } from '../dto/login-request.dto';
 import { RegisterRequest } from '../dto/register-request.dto';
 import { UserEntity } from '../entities/user.entity';
-import { JwtPayload } from '../models/jwt-payload';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { FacebookService } from './facebook.service';
 import { GoogleService } from './google.service';
 
