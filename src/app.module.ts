@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
@@ -23,7 +22,6 @@ import { TrackingModule } from './tracking/tracking.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    EventEmitterModule.forRoot(),
     SeedModule,
     AuthModule,
     PlacesModule,
