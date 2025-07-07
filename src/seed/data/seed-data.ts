@@ -10,31 +10,23 @@ export const initialData: SeedData = {
   users: [
     {
       email: 'test1@gmail.com',
-      name: 'Test',
-      surname: 'User',
+      name: 'Test 1',
       password: 'Abc123',
-      phone: '993689145',
     },
     {
       email: 'test2@gmail.com',
-      name: 'Test',
-      surname: 'User',
+      name: 'Test 2',
       password: 'Abc123',
-      phone: '993689145',
     },
     {
       email: 'joseperu2503@gmail.com',
       name: 'Jose',
-      surname: 'Perez',
       password: 'Abc123',
-      phone: '993689145',
     },
     {
       email: 'juniorp2503@hotmail.com',
       name: 'Jose',
-      surname: 'Perez',
       password: 'Abc123',
-      phone: '993689145',
     },
   ],
   trackingSessionsStatuses: [
@@ -43,8 +35,8 @@ export const initialData: SeedData = {
       name: 'In progress',
     },
     {
-      id: TrackingSessionStatusEnum.COMPLETED,
-      name: 'Completed',
+      id: TrackingSessionStatusEnum.FINISHED,
+      name: 'finished',
     },
     {
       id: TrackingSessionStatusEnum.CANCELLED,

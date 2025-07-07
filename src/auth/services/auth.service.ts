@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -33,31 +32,24 @@ export class AuthService {
   ) {}
 
   async register(registerUserDto: RegisterRequest): Promise<AuthResponse> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
+    return this.dataSource.transaction(async (manager) => {
       const { password, ...userData } = registerUserDto;
 
-      const user = this.userRepository.create({
+      const exist = await manager.findOne(UserEntity, {
+        where: { email: userData.email },
+      });
+      if (exist) {
+        throw new BadRequestException('Email already exists');
+      }
+
+      const user = manager.create(UserEntity, {
         ...userData,
         password: bcrypt.hashSync(password, 10),
       });
-      await this.userRepository.save(user);
-
-      await queryRunner.commitTransaction();
-      await queryRunner.release();
+      await manager.save(user);
 
       return this.buildAuthResponse(user);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      await queryRunner.release();
-      if (error.code === '23505') {
-        throw new BadRequestException(error.detail);
-      }
-      throw new InternalServerErrorException(error);
-    }
+    });
   }
 
   async login(loginUserDto: LoginRequest) {
@@ -80,9 +72,7 @@ export class AuthService {
     return this.buildAuthResponse(user);
   }
 
-  async loginGoogle(
-    loginUserDto: LoginUserGoogleDto,
-  ): Promise<AuthResponse> {
+  async loginGoogle(loginUserDto: LoginUserGoogleDto): Promise<AuthResponse> {
     const { token } = loginUserDto;
 
     const email = await this.googleService.validateToken(token);
@@ -138,8 +128,6 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        surname: user.surname,
-        phone: user.phone,
       },
       token: this.getJwt({ id: user.id }),
     };

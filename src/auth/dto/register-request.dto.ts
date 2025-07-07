@@ -10,6 +10,14 @@ import {
 
 export class RegisterRequest {
   @ApiProperty({
+    description: 'The first name of the user',
+    example: 'John',
+  })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty({
     description: 'The email address of the user',
     example: 'user@example.com',
   })
@@ -32,28 +40,4 @@ export class RegisterRequest {
       'The password must have a uppercase, lowercase letter and a number',
   })
   password: string;
-
-  @ApiProperty({
-    description: 'The first name of the user',
-    example: 'John',
-  })
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty({
-    description: 'The surname of the user',
-    example: 'Doe',
-  })
-  @IsString()
-  @IsNotEmpty()
-  surname: string;
-
-  @ApiProperty({
-    description: 'The phone number of the user',
-    example: '+1234567890',
-  })
-  @IsString()
-  @IsNotEmpty()
-  phone: string;
 }

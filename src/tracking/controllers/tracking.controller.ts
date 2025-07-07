@@ -3,7 +3,7 @@ import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { JwtAuth } from 'src/auth/decorators/jwt-auth.decorator';
 import { User } from 'src/auth/models/user.model';
 import { CancelTrackingSessionRequest } from '../dto/cancel-tracking-session-request.dto';
-import { CompleteTrackingSessionRequest } from '../dto/complete-tracking-session-request.dto';
+import { FinishTrackingSessionRequest } from '../dto/finish-tracking-session-request.dto';
 import { StartTrackingSessionRequest } from '../dto/start-tracking-session-request.dto';
 import { TrackingService } from '../services/tracking.service';
 
@@ -24,13 +24,13 @@ export class TrackingController {
     });
   }
 
-  @Post('complete')
+  @Post('finish')
   @JwtAuth()
-  async completeTrackingSession(
+  async finishTrackingSession(
     @GetUser() user: User,
-    @Body() request: CompleteTrackingSessionRequest,
+    @Body() request: FinishTrackingSessionRequest,
   ) {
-    return this.trackingService.completeTrackingSession(
+    return this.trackingService.finishTrackingSession(
       request.trackingSessionId,
       user.id,
     );

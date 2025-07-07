@@ -34,7 +34,7 @@ export class TrackingService {
       destinationPlaceId: destinationPlaceId,
       startDate: new Date(),
       endDate: null,
-      estimatedDateEnd: new Date(),
+      estimatedEndDate: new Date(),
       statusId: TrackingSessionStatusEnum.IN_PROGRESS,
       radius: distance,
     });
@@ -56,13 +56,13 @@ export class TrackingService {
     };
   }
 
-  async completeTrackingSession(trackingSessionId: string, userId: string) {
+  async finishTrackingSession(trackingSessionId: string, userId: string) {
     await this.trackingSessionRepository.update(
       { id: trackingSessionId, userId: userId },
-      { endDate: new Date(), statusId: TrackingSessionStatusEnum.COMPLETED },
+      { endDate: new Date(), statusId: TrackingSessionStatusEnum.FINISHED },
     );
 
-    return { message: 'Tracking session completed successfully' };
+    return { message: 'Tracking session finished successfully' };
   }
 
   async cancelTrackingSession(trackingSessionId: string, userId: string) {

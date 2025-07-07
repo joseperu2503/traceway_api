@@ -15,6 +15,7 @@ export class UserPlaceService {
     const userPlace = await this.userPlaceRepository.save({
       user: { id: userId },
       place: { id: placeId },
+      lastUsedAt: new Date(),
     });
 
     return userPlace;
@@ -65,7 +66,7 @@ export class UserPlaceService {
     placeId: string,
     date: Date = new Date(),
   ) {
-    const userPlace = await this.findOrCreate(userId, placeId);
+    this.findOrCreate(userId, placeId);
     await this.updateLastUsedAt(userId, placeId, date);
   }
 }

@@ -25,6 +25,9 @@ export class PlacesService {
       relations: {
         place: true,
       },
+      order: {
+        lastUsedAt: 'DESC',
+      },
     });
 
     return userPlaces.map((userPlace) => ({
@@ -55,18 +58,24 @@ export class PlacesService {
   }
 
   async findOrCreate(params: FindOrCreatePlaceParams): Promise<Place> {
-    const place = await this.placeRepository.findOne({
+    let place = await this.placeRepository.findOne({
       where: {
         latitude: params.latitude,
         longitude: params.longitude,
       },
     });
 
-    if (place) {
-      return place;
+    if (!place) {
+      place = await this.placeRepository.save(params);
     }
 
-    return this.placeRepository.save(params);
+    return {
+      id: place.id,
+      mainText: place.mainText,
+      secondaryText: place.secondaryText,
+      latitude: place.latitude,
+      longitude: place.longitude,
+    };
   }
 
   async delete(id: string) {
@@ -109,7 +118,7 @@ export class PlacesService {
       );
 
       const route = components.find((c) =>
-        c.types.includes(PlaceType2.street_number),
+        c.types.includes(PlaceType2.route),
       );
 
       // Si no hay ni calle ni número, pasa al siguiente resultado

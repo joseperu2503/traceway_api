@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class CompleteTrackingSessionRequest {
+export class FinishTrackingSessionRequest {
   @IsUUID()
   trackingSessionId: string;
 }

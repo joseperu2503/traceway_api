@@ -28,17 +28,11 @@ export class UserEntity implements User {
   @Column('text')
   name: string;
 
-  @Column('text')
-  surname: string;
-
   @Column('bool', {
     default: true,
     name: 'is_active',
   })
   isActive: boolean;
-
-  @Column('text')
-  phone: string;
 
   @ManyToMany(() => PlaceEntity, (place) => place.users)
   places: PlaceEntity[];
