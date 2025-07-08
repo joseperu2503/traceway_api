@@ -36,7 +36,7 @@ export const initialData: SeedData = {
     },
     {
       id: TrackingSessionStatusEnum.FINISHED,
-      name: 'finished',
+      name: 'Finished',
     },
     {
       id: TrackingSessionStatusEnum.CANCELLED,
