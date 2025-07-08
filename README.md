@@ -42,6 +42,7 @@ npm run migrations:run
 
 ```bash
 npm run cli -- seed
+npm run cli:prod -- seed
 ```
 
 4. Salir:
