@@ -2,7 +2,7 @@ import {
   Client,
   PlaceAutocompleteResponse,
   PlaceDetailsResponse,
-  ReverseGeocodeResponse,
+  ReverseGeocodeResponse
 } from '@googlemaps/google-maps-services-js';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
@@ -15,14 +15,39 @@ export class GoogleMapsSdkService implements GoogleMapsService {
 
   private readonly client = new Client({});
 
-  async autocomplete(input: string): Promise<PlaceAutocompleteResponse> {
-    const response = await this.client.placeAutocomplete({
-      params: {
-        input,
-        key: this.googleMapsApiKey,
-      },
-    });
+  async autocomplete(
+    input: string,
+    countryCode?: string,
+    center?: { lat: number; lng: number },
+    radius?: number,
+    strict = false,
+    sessiontoken?: string,
+  ): Promise<PlaceAutocompleteResponse> {
+    const params = {
+      input,
+      key: this.googleMapsApiKey,
+      sessiontoken,
+      ...(countryCode && { components: [`country:${countryCode}`] }),
 
+      ...(center && {
+        origin: {
+          lat: center.lat,
+          lng: center.lng,
+        },
+      }),
+
+      ...(center &&
+        radius && {
+          location: {
+            lat: center.lat,
+            lng: center.lng,
+          },
+          radius,
+          strictbounds: strict,
+        }),
+    };
+
+    const response = await this.client.placeAutocomplete({ params });
     return response;
   }
 

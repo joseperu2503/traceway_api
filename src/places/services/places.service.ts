@@ -1,12 +1,13 @@
-import { PlaceType2 } from '@googlemaps/google-maps-services-js';
+import { AddressType, PlaceType2 } from '@googlemaps/google-maps-services-js';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { PlaceEntity } from '../entities/place.entity';
 import { UserPlaceEntity } from '../entities/user-place.entity';
 import { FindOrCreatePlaceParams } from '../interfaces/find-or-create-place-params';
 import { Place } from '../models/place.model';
-import { GoogleMapsHttpService } from './google-maps.service';
+import { GoogleMapsSdkService } from './google-maps.service';
 
 @Injectable()
 export class PlacesService {
@@ -16,7 +17,7 @@ export class PlacesService {
     @InjectRepository(UserPlaceEntity)
     private readonly userPlaceRepository: Repository<UserPlaceEntity>,
 
-    private readonly googleMapsService: GoogleMapsHttpService,
+    private readonly googleMapsService: GoogleMapsSdkService,
   ) {}
 
   async findAllByUser(userId: string) {
@@ -83,15 +84,69 @@ export class PlacesService {
   }
 
   async suggestions(input: string) {
-    const res = await this.googleMapsService.autocomplete(input);
+    const sessiontoken = uuidv4();
+    const center = { lat: -11.851897, lng: -77.082528 };
+    const country = 'pe';
 
-    const predictions = res.data.predictions.map((prediction) => ({
-      resultId: prediction.place_id,
-      mainText: prediction.structured_formatting.main_text ?? '',
-      secondaryText: prediction.structured_formatting.secondary_text ?? '',
+    // 1) Recoge ambas llamadas (10 km y 20 km)
+    const [r1, r2] = await Promise.all([
+      this.googleMapsService.autocomplete(
+        input,
+        country,
+        center,
+        10000,
+        true,
+        sessiontoken,
+      ),
+      this.googleMapsService.autocomplete(
+        input,
+        country,
+        center,
+        undefined,
+        false,
+        sessiontoken,
+      ),
+    ]);
+
+    // 2) Fusiona y deduplica
+    const all = [...r1.data.predictions, ...r2.data.predictions];
+    const unique = Array.from(
+      new Map(all.map((p) => [p.place_id, p])).values(),
+    );
+
+    // 3) Define tu mapa de prioridad
+    const typePriority: Partial<Record<AddressType, number>> = {
+      country: 0,
+      administrative_area_level_1: 1,
+      administrative_area_level_2: 1,
+      locality: 2,
+      sublocality: 2,
+      route: 3,
+      street_address: 3,
+      establishment: 4,
+      point_of_interest: 5,
+    };
+
+    const getTypeScore = (p: (typeof unique)[0]) =>
+      p.types
+        .map((t) => typePriority[t] ?? 100)
+        .reduce((min, cur) => Math.min(min, cur), Infinity);
+
+    // 4) Ordena por tipo → distancia
+    const sorted = unique.sort((a, b) => {
+      const ta = getTypeScore(a),
+        tb = getTypeScore(b);
+      if (ta !== tb) return ta - tb;
+      return (a.distance_meters ?? Infinity) - (b.distance_meters ?? Infinity);
+    });
+
+    // 5) Devuelve al formato de tu UI
+    return sorted.map((p) => ({
+      resultId: p.place_id,
+      mainText: p.structured_formatting.main_text ?? '',
+      secondaryText: p.structured_formatting.secondary_text ?? '',
+      distance: p.distance_meters,
     }));
-
-    return predictions;
   }
 
   async getSuggestionGeometry(suggestionId: string) {
@@ -117,9 +172,7 @@ export class PlacesService {
         c.types.includes(PlaceType2.street_number),
       );
 
-      const route = components.find((c) =>
-        c.types.includes(PlaceType2.route),
-      );
+      const route = components.find((c) => c.types.includes(PlaceType2.route));
 
       // Si no hay ni calle ni número, pasa al siguiente resultado
       if (!route && !streetNumber) continue;
