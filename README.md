@@ -51,12 +51,6 @@ npm run cli:prod -- seed
 exit
 ```
 
-## Limpiar imagenes dangling
-
-```bash
-docker image prune -f
-```
-
 ## Crear migraciones
 
 ```bash
